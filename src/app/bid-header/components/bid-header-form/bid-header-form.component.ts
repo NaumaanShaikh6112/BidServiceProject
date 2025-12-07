@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { BidHeaderService } from '../../services/bid-header.service';
+import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
+
 
 // Angular Material Imports
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -68,13 +71,29 @@ export class BidHeaderFormComponent  implements OnInit {
     'action'
   ];
 
-  constructor(private fb: FormBuilder, private service: BidHeaderService) {}
+  constructor(
+    private fb: FormBuilder,
+    private service: BidHeaderService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
+
 ngOnInit() {
   this.createForm();
-  setTimeout(() => {
-    this.loadData();
-  });
+
+  const id = this.route.snapshot.paramMap.get('id');
+
+  if (id) {
+    this.isEdit = true;
+    this.loadRecord(id);
+  }
 }
+
+
+goToList() {
+  this.router.navigate(['/bid-header']);
+}
+
 
   createForm() {
    const today = new Date().toISOString().substring(0, 10);
@@ -179,6 +198,26 @@ ngOnInit() {
     });
   }
 
+  loadRecord(id: string) {
+  this.service.getById(id).subscribe({
+    next: (data: any) => {
+      this.form.patchValue({
+        ...data,
+        bidDate: data.bidDate ? data.bidDate.split('T')[0] : '',
+        expiryDate: data.expiryDate ? data.expiryDate.split('T')[0] : '',
+        version: data.version ?? 0
+      });
+
+      this.isEdit = true;
+    },
+    error: (err: any) => {
+      console.error("Load Edit Error:", err);
+      alert("Failed to load record.");
+    }
+  });
+}
+
+
   save() {
   if (this.form.invalid) {
     this.form.markAllAsTouched();
@@ -200,6 +239,7 @@ ngOnInit() {
       next: () => {
         console.log("Updated Successfully");
         if (typeof window !== 'undefined') alert("Updated Successfully");
+        this.router.navigate(['/bid-header']);
         setTimeout(() => { this.loadData(); }, 0);
         this.form.reset();
         this.isEdit = false;
@@ -238,8 +278,6 @@ ngOnInit() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }
-
-
 
   // DELETE
   delete(id: string) {

@@ -1,513 +1,493 @@
 @use '@angular/material' as mat;
-// ===========================
-// VARIABLES & THEME
-// ===========================
 
-$primary-color: #1976d2;
-$primary-dark: #1565c0;
-$primary-light: #42a5f5;
-$accent-color: #2196f3;
-$warn-color: #f44336;
-$success-color: #4caf50;
+/* ===========================
+   THEME TOKENS
+   =========================== */
 
-$white: #ffffff;
-$background: #f5f7fa;
-$card-background: #ffffff;
-$border-color: #e0e4e8;
-$text-primary: #1a1a1a;
-$text-secondary: #6b7280;
-$text-muted: #9ca3af;
+$primary: #1976d2;
+$primary-dark: #1556a5;
+$primary-light: #e3f2fd;
 
-$sidebar-width: 260px;
-$header-height: 64px;
-$border-radius: 8px;
-$border-radius-lg: 12px;
-$spacing-unit: 8px;
+$accent: #2196f3;
+$success: #22c55e;
+$warning: #f59e0b;
+$danger: #ef4444;
 
-$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
-$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-$shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+$bg-main: #f4f6fb;
+$bg-card: rgba(255, 255, 255, 0.9);
+$border-soft: rgba(148, 163, 184, 0.3);
 
-// ===========================
-// MIXINS
-// ===========================
+$text-main: #111827;
+$text-muted: #6b7280;
 
-@mixin glass-effect {
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: $shadow-md;
+$radius-sm: 6px;
+$radius-md: 10px;
+$radius-lg: 16px;
+
+$shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.10);
+$shadow-subtle: 0 4px 14px rgba(15, 23, 42, 0.08);
+
+$space: 8px;
+
+/* ===========================
+   PAGE BACKDROP
+   (works nice under sidebar)
+   =========================== */
+
+:host {
+  display: block;
+  padding: $space * 2;
+  background: #ffffff;
+  min-height: calc(100vh - 72px);
 }
 
-@mixin transition-smooth {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
 
-@mixin hover-lift {
-  @include transition-smooth;
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: $shadow-lg;
-  }
-}
+/* ===========================
+   CARD BASE (GLASS FEEL)
+   =========================== */
 
-// ===========================
-// CARDS
-// ===========================
-
-.glass-card {
-  @include glass-effect;
-  border-radius: $border-radius-lg;
-  margin-bottom: $spacing-unit * 3;
+.table-card {
+  border-radius: $radius-lg;
+  background: $bg-card;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: $shadow-soft;
+  border: 1px solid rgba(255, 255, 255, 0.7);
   overflow: hidden;
+  padding: 0;
 
-  .card-header {
-    background: linear-gradient(135deg, rgba($primary-color, 0.02) 0%, rgba($primary-light, 0.02) 100%);
-    border-bottom: 1px solid $border-color;
-    padding: $spacing-unit * 3;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  &.glass-card {
+    position: relative;
 
-    .card-title-wrapper {
-      display: flex;
-      align-items: center;
-      gap: $spacing-unit * 2;
-
-      .card-icon {
-        color: $primary-color;
-        font-size: 28px;
-        width: 28px;
-        height: 28px;
-      }
-
-      .card-title {
-        font-size: 20px;
-        font-weight: 600;
-        color: $text-primary;
-        margin: 0;
-      }
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba($primary, 0.08),
+        rgba($primary, 0)
+      );
+      opacity: 0.4;
+      pointer-events: none;
     }
 
-    .table-actions {
-      .search-field {
-        width: 300px;
-
-        ::ng-deep .mat-mdc-form-field-subscript-wrapper {
-          display: none;
-        }
-      }
-    }
-  }
-
-  .card-content {
-    padding: $spacing-unit * 3;
-  }
-}
-
-// ===========================
-// FORM STYLES
-// ===========================
-
-.form-section {
-  margin-bottom: $spacing-unit * 4;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-
-  .section-header {
-    margin-bottom: $spacing-unit * 3;
-
-    .section-title-wrapper {
-      display: flex;
-      align-items: center;
-      gap: $spacing-unit * 2;
-      margin-bottom: $spacing-unit * 2;
-
-      .section-icon {
-        color: $primary-color;
-        font-size: 24px;
-        width: 24px;
-        height: 24px;
-      }
-
-      .section-title {
-        font-size: 18px;
-        font-weight: 600;
-        color: $text-primary;
-        margin: 0;
-      }
+    > * {
+      position: relative;
+      z-index: 1;
     }
   }
 }
 
-.form-grid {
-  display: grid;
-  gap: $spacing-unit * 3;
-
-  &.grid-2 {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  &.grid-3 {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  &.grid-4 {
-    grid-template-columns: repeat(4, 1fr);
-  }
-
-  @media (max-width: 1200px) {
-    &.grid-4 {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (max-width: 768px) {
-    &.grid-2,
-    &.grid-3,
-    &.grid-4 {
-      grid-template-columns: 1fr;
-    }
-  }
+/* simple appear animation */
+.fade-in {
+  animation: fadeInUp 320ms ease-out;
 }
 
-.form-field {
-  ::ng-deep {
-    .mat-mdc-text-field-wrapper {
-      background: $white;
-    }
+/* ===========================
+   CARD HEADER
+   =========================== */
 
-    .mat-mdc-form-field-focus-overlay {
-      background-color: transparent;
-    }
-
-    .mdc-notched-outline__leading,
-    .mdc-notched-outline__notch,
-    .mdc-notched-outline__trailing {
-      border-color: $border-color !important;
-    }
-
-    &.mat-focused {
-      .mdc-notched-outline__leading,
-      .mdc-notched-outline__notch,
-      .mdc-notched-outline__trailing {
-        border-color: $primary-color !important;
-        border-width: 2px !important;
-      }
-    }
-
-    .mat-mdc-form-field-subscript-wrapper {
-      margin-top: $spacing-unit;
-    }
-  }
-
-  .field-icon {
-    color: $text-muted;
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
-  }
-}
-
-.checkbox-field {
+.card-header {
   display: flex;
   align-items: center;
-  padding: $spacing-unit * 2 0;
+  justify-content: space-between;
+  padding: $space * 2.5 $space * 3;
+  border-bottom: 1px solid $border-soft;
+  background: linear-gradient(
+    120deg,
+    rgba($primary, 0.07),
+    rgba(255, 255, 255, 0.96)
+  );
+}
 
-  .custom-checkbox {
-    ::ng-deep {
-      .mdc-label {
-        font-weight: 500;
-        color: $text-primary;
-      }
+.card-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: $space * 1.5;
 
-      .mdc-checkbox__background {
-        border-color: $border-color;
-      }
+  .card-icon {
+    color: $primary;
+    font-size: 26px;
+  }
 
-      &.mat-mdc-checkbox-checked {
-        .mdc-checkbox__background {
-          background-color: $primary-color;
-          border-color: $primary-color;
-        }
-      }
-    }
+  .card-title {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: $text-main;
   }
 }
 
-.form-actions {
+/* header right – buttons + search */
+.table-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: $spacing-unit * 2;
-  margin-top: $spacing-unit * 4;
-  padding-top: $spacing-unit * 3;
-  border-top: 1px solid $border-color;
-
-  button {
-    min-width: 140px;
-    height: 44px;
-    border-radius: $border-radius;
-    font-weight: 500;
-    font-size: 15px;
-    @include transition-smooth;
-
-    mat-icon {
-      margin-right: $spacing-unit;
-    }
-  }
-
-  .btn-secondary {
-    border: 1px solid $border-color;
-    color: $text-secondary;
-
-    &:hover {
-      background: rgba($text-secondary, 0.04);
-      border-color: $text-secondary;
-    }
-  }
+  align-items: center;
+  gap: $space * 2;
 
   .btn-primary {
-    background: $primary-color;
+    border-radius: $radius-md;
+    padding: 0 $space * 2.5;
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba($primary, 0.35);
+    text-transform: none;
 
-    &:hover {
-      background: $primary-dark;
-      box-shadow: $shadow-md;
+    mat-icon {
+      margin-right: $space;
+      font-size: 20px;
+    }
+  }
+
+  .search-field {
+    min-width: 260px;
+    max-width: 320px;
+
+    ::ng-deep .mat-mdc-form-field-flex {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: $radius-md;
+      box-shadow: $shadow-subtle;
+    }
+
+    ::ng-deep .mat-mdc-form-field-outline {
+      --mdc-outlined-text-field-outline-width: 1px;
     }
   }
 }
 
-// ===========================
-// TABLE STYLES
-// ===========================
+/* ===========================
+   CARD CONTENT
+   =========================== */
+
+.card-content {
+  padding: $space * 2.5 $space * 3 $space * 3;
+}
+
+/* ===========================
+   TABLE WRAPPER
+   =========================== */
 
 .table-container {
-  overflow-x: auto;
-  border-radius: $border-radius;
-  border: 1px solid $border-color;
+  position: relative;
+  border-radius: $radius-md;
+  border: 1px solid $border-soft;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: $shadow-subtle;
 }
+
+/* ===========================
+   MAT TABLE STYLES
+   =========================== */
 
 .modern-table {
   width: 100%;
-  background: $white;
+  border-spacing: 0;
+  border-collapse: collapse;
+
+  th,
+  td {
+    white-space: nowrap;
+  }
+
+  /* sticky header */
+  ::ng-deep .mat-mdc-header-row {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
 
   th {
-    background: linear-gradient(135deg, rgba($primary-color, 0.04) 0%, rgba($primary-light, 0.04) 100%);
-    color: $text-primary;
+    background: linear-gradient(
+      120deg,
+      rgba($primary, 0.06),
+      rgba($primary, 0.02)
+    );
+    color: $text-main;
     font-weight: 600;
-    font-size: 13px;
+    font-size: 12px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: $spacing-unit * 2 $spacing-unit * 3;
-    border-bottom: 2px solid $border-color;
+    letter-spacing: 0.06em;
+    padding: $space * 1.75 $space * 2.5;
+    border-bottom: 1px solid rgba($border-soft, 0.75);
+
+    ::ng-deep .mat-sort-header-container {
+      justify-content: flex-start;
+      gap: 4px;
+    }
   }
 
   td {
-    padding: $spacing-unit * 2 $spacing-unit * 3;
-    color: $text-secondary;
     font-size: 14px;
-    border-bottom: 1px solid rgba($border-color, 0.5);
+    color: $text-muted;
+    padding: $space * 1.5 $space * 2.5;
+    border-bottom: 1px solid rgba($border-soft, 0.6);
+    background-color: rgba(255, 255, 255, 0.9);
   }
 
   .table-row {
-    @include transition-smooth;
+    transition: background-color 160ms ease-out, transform 160ms ease-out,
+      box-shadow 160ms ease-out;
 
     &:hover {
-      background: rgba($primary-color, 0.02);
+      background: rgba($primary, 0.03);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.08);
     }
   }
+}
 
-  .id-badge {
-    display: inline-block;
-    padding: $spacing-unit $spacing-unit * 2;
-    background: rgba($primary-color, 0.08);
-    color: $primary-color;
-    border-radius: $border-radius;
-    font-weight: 600;
-    font-size: 12px;
-    font-family: monospace;
+/* ===========================
+   CELL DECORATIONS
+   =========================== */
+
+.id-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba($primary, 0.08);
+  color: $primary;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', 'SFMono-Regular', Menlo, Monaco, Consolas,
+    'Liberation Mono', 'Courier New', monospace;
+}
+
+.vendor-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .vendor-icon {
+    font-size: 18px;
+    color: $primary;
   }
 
-  .vendor-cell {
+  span {
+    font-weight: 500;
+    color: $text-main;
+  }
+}
+
+/* status pill */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: capitalize;
+  border: 1px solid transparent;
+
+  &.status-draft {
+    background: rgba(148, 163, 184, 0.12);
+    color: #4b5563;
+    border-color: rgba(148, 163, 184, 0.4);
+  }
+
+  &.status-submitted {
+    background: rgba($accent, 0.08);
+    color: $accent;
+    border-color: rgba($accent, 0.5);
+  }
+
+  &.status-under_review {
+    background: rgba($warning, 0.10);
+    color: $warning;
+    border-color: rgba($warning, 0.6);
+    animation: pulse-soft 1.4s infinite;
+  }
+
+  &.status-approved {
+    background: rgba($success, 0.10);
+    color: $success;
+    border-color: rgba($success, 0.55);
+  }
+
+  &.status-rejected {
+    background: rgba($danger, 0.10);
+    color: $danger;
+    border-color: rgba($danger, 0.55);
+  }
+}
+
+.version-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.04);
+  color: #4b5563;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* actions */
+.action-buttons {
+  display: flex;
+  gap: 6px;
+
+  .action-btn-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    transition: transform 140ms ease-out, box-shadow 140ms ease-out,
+      background-color 140ms ease-out;
+
+    &:hover {
+      transform: translateY(-1px) scale(1.03);
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.22);
+      background-color: rgba($primary, 0.04);
+    }
+
+    mat-icon {
+      font-size: 19px;
+    }
+  }
+}
+
+/* ===========================
+   PAGINATOR STYLING
+   =========================== */
+
+::ng-deep .mat-mdc-paginator {
+  border-top: 1px solid $border-soft;
+  background: rgba(248, 250, 252, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font-size: 13px;
+
+  .mat-mdc-paginator-container {
+    padding: 4px 16px;
+  }
+
+  .mat-mdc-paginator-page-size-label,
+  .mat-mdc-paginator-range-label {
+    color: $text-muted;
+  }
+
+  .mat-mdc-select-trigger {
+    border-radius: $radius-sm;
+  }
+
+  .mat-mdc-icon-button {
+    border-radius: 999px;
+    transition: background-color 120ms ease-out, transform 120ms ease-out;
+
+    &:hover {
+      background: rgba(148, 163, 184, 0.16);
+      transform: translateY(-1px);
+    }
+  }
+}
+
+/* ===========================
+   EMPTY STATE (if needed)
+   =========================== */
+
+.empty-state {
+  padding: $space * 6 $space * 3;
+  text-align: center;
+  color: $text-muted;
+
+  .empty-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 999px;
+    margin: 0 auto $space * 2;
     display: flex;
     align-items: center;
-    gap: $spacing-unit * 2;
-
-    .vendor-icon {
-      color: $primary-color;
-      font-size: 20px;
-      width: 20px;
-      height: 20px;
-    }
+    justify-content: center;
+    background: rgba($primary, 0.08);
+    color: $primary;
+    font-size: 32px;
   }
 
-  .status-badge {
-    display: inline-block;
-    padding: $spacing-unit $spacing-unit * 2;
-    border-radius: $border-radius;
-    font-weight: 500;
-    font-size: 12px;
-    text-transform: capitalize;
-
-    &.status-draft {
-      background: rgba(#9e9e9e, 0.1);
-      color: #616161;
-    }
-
-    &.status-submitted {
-      background: rgba($accent-color, 0.1);
-      color: $accent-color;
-    }
-
-    &.status-under_review {
-      background: rgba(#ff9800, 0.1);
-      color: #f57c00;
-    }
-
-    &.status-approved {
-      background: rgba($success-color, 0.1);
-      color: $success-color;
-    }
-
-    &.status-rejected {
-      background: rgba($warn-color, 0.1);
-      color: $warn-color;
-    }
-  }
-
-  .version-badge {
-    display: inline-block;
-    padding: $spacing-unit $spacing-unit * 2;
-    background: rgba($text-secondary, 0.08);
-    color: $text-secondary;
-    border-radius: $border-radius;
+  .empty-title {
+    font-size: 18px;
     font-weight: 600;
-    font-size: 12px;
+    margin-bottom: $space;
+    color: $text-main;
   }
 
-  .action-buttons {
-    display: flex;
-    gap: $spacing-unit;
+  .empty-subtitle {
+    font-size: 14px;
+    margin-bottom: $space * 2;
+  }
 
-    .action-btn-icon {
-      width: 36px;
-      height: 36px;
-      @include transition-smooth;
-
-      &:hover {
-        transform: scale(1.1);
-      }
-
-      mat-icon {
-        font-size: 20px;
-        width: 20px;
-        height: 20px;
-      }
-    }
+  .empty-cta {
+    border-radius: $radius-md;
+    text-transform: none;
+    font-weight: 600;
   }
 }
 
-// ===========================
-// MATERIAL OVERRIDES
-// ===========================
-
-::ng-deep {
-  .mat-mdc-raised-button.mat-primary {
-    background: $primary-color;
-
-    &:hover {
-      background: $primary-dark;
-    }
-  }
-
-  .mat-mdc-outlined-button {
-    border-color: $border-color;
-
-    &:hover {
-      background: rgba($primary-color, 0.04);
-    }
-  }
-
-  .mat-mdc-form-field-subscript-wrapper {
-    height: auto;
-  }
-
-  .mat-mdc-select-panel {
-    border-radius: $border-radius;
-    box-shadow: $shadow-lg;
-  }
-
-  .mat-mdc-option {
-    &:hover {
-      background: rgba($primary-color, 0.04);
-    }
-
-    &.mat-mdc-option-active {
-      background: rgba($primary-color, 0.08);
-    }
-  }
-
-  .mat-divider {
-    border-top-color: $border-color;
-  }
-}
-
-// ===========================
-// RESPONSIVE DESIGN
-// ===========================
+/* ===========================
+   RESPONSIVE
+   =========================== */
 
 @media (max-width: 1024px) {
-  .dashboard-sidenav {
-    width: 220px;
-  }
-
-  .content-wrapper {
-    padding: $spacing-unit * 2;
-  }
-
-  .page-header-section .header-content {
+  .card-header {
     flex-direction: column;
-    gap: $spacing-unit * 2;
+    align-items: flex-start;
+    gap: $space * 2;
+  }
 
-    .header-actions {
-      width: 100%;
-      justify-content: flex-start;
+  .table-actions {
+    width: 100%;
+    justify-content: flex-start;
+
+    .search-field {
+      flex: 1;
+      max-width: none;
     }
   }
 }
 
 @media (max-width: 768px) {
-  .top-header {
-    padding: 0 $spacing-unit * 2;
+  :host {
+    padding: $space * 1.5;
   }
 
-  .page-header-section {
-    .title-section .page-title {
-      font-size: 24px;
+  .card-content {
+    padding: $space * 2;
+  }
+
+  .modern-table {
+    th,
+    td {
+      padding: $space * 1.25 $space * 1.5;
     }
   }
 
-  .glass-card {
-    .card-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: $spacing-unit * 2;
+  .table-container {
+    border-radius: $radius-sm;
+  }
 
-      .table-actions .search-field {
-        width: 100%;
-      }
+  .table-actions {
+    flex-direction: column;
+    align-items: stretch;
+
+    .btn-primary {
+      width: 100%;
+      justify-content: center;
     }
   }
 }
 
-// ===========================
-// ANIMATIONS
-// ===========================
+/* ===========================
+   ANIMATIONS
+   =========================== */
 
-@keyframes fadeIn {
+@keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -515,10 +495,14 @@ $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
   }
 }
 
-.glass-card {
-  animation: fadeIn 0.4s ease-out;
-}
-
-.form-section {
-  animation: fadeIn 0.5s ease-out;
+@keyframes pulse-soft {
+  0% {
+    box-shadow: 0 0 0 0 rgba($warning, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba($warning, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba($warning, 0);
+  }
 }

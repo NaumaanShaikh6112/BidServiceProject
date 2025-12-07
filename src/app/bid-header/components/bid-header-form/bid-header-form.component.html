@@ -1,351 +1,353 @@
+<!-- Form Card -->
+<mat-card class="form-card glass-card">
+  <mat-card-header class="card-header">
+    <div class="card-title-wrapper">
+      <mat-icon class="card-icon">description</mat-icon>
+      <mat-card-title class="card-title">
+        @if (isEdit) {
+        Edit Bid Header
+        } @else {
+        New Bid Header
+        }
+      </mat-card-title>
+    </div>
+    <button mat-stroked-button color="primary" class="go-list-btn" (click)="goToList()">
+      <mat-icon>arrow_back</mat-icon>
+      Back to List
+    </button>
+  </mat-card-header>
 
-        <!-- Form Card -->
-        <mat-card class="form-card glass-card">
-          <mat-card-header class="card-header">
-            <div class="card-title-wrapper">
-              <mat-icon class="card-icon">description</mat-icon>
-              <mat-card-title class="card-title">
-                @if (isEdit) {
-                  Edit Bid Header
-                } @else {
-                  New Bid Header
-                }
-              </mat-card-title>
-            </div>
-          </mat-card-header>
+  <mat-card-content class="card-content">
+    <form [formGroup]="form" (ngSubmit)="save()">
 
-          <mat-card-content class="card-content">
-            <form [formGroup]="form" (ngSubmit)="save()">
+      <!-- Basic Information Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <div class="section-title-wrapper">
+            <mat-icon class="section-icon">info</mat-icon>
+            <h3 class="section-title">Basic Information</h3>
+          </div>
+          <mat-divider></mat-divider>
+        </div>
 
-              <!-- Basic Information Section -->
-              <div class="form-section">
-                <div class="section-header">
-                  <div class="section-title-wrapper">
-                    <mat-icon class="section-icon">info</mat-icon>
-                    <h3 class="section-title">Basic Information</h3>
-                  </div>
-                  <mat-divider></mat-divider>
-                </div>
+        <div class="form-grid grid-3">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Indent Number</mat-label>
+            <input matInput formControlName="indentNo" placeholder="Enter indent number">
+            <mat-icon matPrefix class="field-icon">tag</mat-icon>
+          </mat-form-field>
 
-                <div class="form-grid grid-3">
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Indent Number</mat-label>
-                    <input matInput formControlName="indentNo" placeholder="Enter indent number">
-                    <mat-icon matPrefix class="field-icon">tag</mat-icon>
-                  </mat-form-field>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>RFQ ID</mat-label>
+            <input matInput formControlName="rfqId" placeholder="Enter RFQ ID">
+            <mat-icon matPrefix class="field-icon">receipt</mat-icon>
+            @if (form.get('rfqId')?.hasError('required') && form.get('rfqId')?.touched) {
+            <mat-error>RFQ ID is required and cannot be empty.</mat-error>
+            }
+          </mat-form-field>
 
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>RFQ ID</mat-label>
-                    <input matInput formControlName="rfqId" placeholder="Enter RFQ ID">
-                    <mat-icon matPrefix class="field-icon">receipt</mat-icon>
-                    @if (form.get('rfqId')?.hasError('required') && form.get('rfqId')?.touched) {
-                      <mat-error>RFQ ID is required and cannot be empty.</mat-error>
-                    }
-                  </mat-form-field>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Bid Number</mat-label>
+            <input matInput formControlName="bidNo" placeholder="Enter bid number">
+            <mat-icon matPrefix class="field-icon">confirmation_number</mat-icon>
+          </mat-form-field>
 
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Bid Number</mat-label>
-                    <input matInput formControlName="bidNo" placeholder="Enter bid number">
-                    <mat-icon matPrefix class="field-icon">confirmation_number</mat-icon>
-                  </mat-form-field>
-
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Bid Date</mat-label>
-            <input matInput type="date" formControlName="bidDate">
-            <mat-icon matPrefix>calendar_today</mat-icon>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Bid Date</mat-label>
+            <input matInput [matDatepicker]="bidPicker" formControlName="bidDate">
+            <mat-datepicker-toggle matIconSuffix [for]="bidPicker"></mat-datepicker-toggle>
+            <mat-datepicker #bidPicker></mat-datepicker>
 
             @if (form.get('bidDate')?.hasError('futureDate')) {
-              <mat-error>
-                Bid Date cannot be in the future.
-              </mat-error>
+            <mat-error>Bid Date cannot be in the future.</mat-error>
             }
             @if (form.get('bidDate')?.hasError('required') && form.get('bidDate')?.touched) {
-              <mat-error>
-                Bid Date is required.
-              </mat-error>
+            <mat-error>Bid Date is required.</mat-error>
             }
-                  </mat-form-field>
+          </mat-form-field>
 
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Expiry Date</mat-label>
-                    <input matInput type="date" formControlName="expiryDate">
-                    <mat-icon matPrefix class="field-icon">event</mat-icon>
-                  </mat-form-field>
 
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Status</mat-label>
-                    <mat-select formControlName="status">
-                      <mat-option value="draft">Draft</mat-option>
-                      <mat-option value="submitted">Submitted</mat-option>
-                      <mat-option value="under_review">Under Review</mat-option>
-                      <mat-option value="approved">Approved</mat-option>
-                      <mat-option value="rejected">Rejected</mat-option>
-                    </mat-select>
-                    <mat-icon matPrefix class="field-icon">flag</mat-icon>
-                  </mat-form-field>
-                </div>
-              </div>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Expiry Date</mat-label>
+            <input matInput [matDatepicker]="expPicker" formControlName="expiryDate">
+            <mat-datepicker-toggle matIconSuffix [for]="expPicker"></mat-datepicker-toggle>
+            <mat-datepicker #expPicker></mat-datepicker>
+          </mat-form-field>
 
-              <!-- Vendor Information Section -->
-              <div class="form-section">
-                <div class="section-header">
-                  <div class="section-title-wrapper">
-                    <mat-icon class="section-icon">business</mat-icon>
-                    <h3 class="section-title">Vendor Information</h3>
-                  </div>
-                  <mat-divider></mat-divider>
-                </div>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Status</mat-label>
+            <mat-select formControlName="status">
+              <mat-option value="draft">Draft</mat-option>
+              <mat-option value="submitted">Submitted</mat-option>
+              <mat-option value="under_review">Under Review</mat-option>
+              <mat-option value="approved">Approved</mat-option>
+              <mat-option value="rejected">Rejected</mat-option>
+            </mat-select>
+            <mat-icon matPrefix class="field-icon">flag</mat-icon>
+          </mat-form-field>
+        </div>
+      </div>
 
-                <div class="form-grid grid-3">
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Vendor ID</mat-label>
-                    <input matInput formControlName="vendorId" placeholder="Enter vendor ID">
-                    <mat-icon matPrefix class="field-icon">badge</mat-icon>
-                    @if (form.get('vendorId')?.hasError('required') && form.get('vendorId')?.touched) {
-                      <mat-error>Vendor ID is required.</mat-error>
-                    }
-                  </mat-form-field>
+      <!-- Vendor Information Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <div class="section-title-wrapper">
+            <mat-icon class="section-icon">business</mat-icon>
+            <h3 class="section-title">Vendor Information</h3>
+          </div>
+          <mat-divider></mat-divider>
+        </div>
 
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Vendor Name</mat-label>
-                    <input matInput formControlName="vendorName" placeholder="Enter vendor name">
-                    <mat-icon matPrefix class="field-icon">store</mat-icon>
-                    @if (form.get('vendorName')?.hasError('required') && form.get('vendorName')?.touched) {
-                      <mat-error>Vendor Name is required.</mat-error>
-                    }
-                  </mat-form-field>
+        <div class="form-grid grid-3">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Vendor ID</mat-label>
+            <input matInput formControlName="vendorId" placeholder="Enter vendor ID">
+            <mat-icon matPrefix class="field-icon">badge</mat-icon>
+            @if (form.get('vendorId')?.hasError('required') && form.get('vendorId')?.touched) {
+            <mat-error>Vendor ID is required.</mat-error>
+            }
+          </mat-form-field>
 
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Contact Person</mat-label>
-                    <input matInput formControlName="contactPerson" placeholder="Enter contact name">
-                    <mat-icon matPrefix class="field-icon">person</mat-icon>
-                  </mat-form-field>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Vendor Name</mat-label>
+            <input matInput formControlName="vendorName" placeholder="Enter vendor name">
+            <mat-icon matPrefix class="field-icon">store</mat-icon>
+            @if (form.get('vendorName')?.hasError('required') && form.get('vendorName')?.touched) {
+            <mat-error>Vendor Name is required.</mat-error>
+            }
+          </mat-form-field>
 
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Mobile Number</mat-label>
-                    <input matInput formControlName="mobileNo" placeholder="Enter mobile number">
-                    <mat-icon matPrefix class="field-icon">phone</mat-icon>
-                  </mat-form-field>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Contact Person</mat-label>
+            <input matInput formControlName="contactPerson" placeholder="Enter contact name">
+            <mat-icon matPrefix class="field-icon">person</mat-icon>
+          </mat-form-field>
 
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Factory Code</mat-label>
-                    <input matInput formControlName="factoryCode" placeholder="Enter factory code">
-                    <mat-icon matPrefix class="field-icon">factory</mat-icon>
-                  </mat-form-field>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Mobile Number</mat-label>
+            <input matInput formControlName="mobileNo" placeholder="Enter mobile number">
+            <mat-icon matPrefix class="field-icon">phone</mat-icon>
+          </mat-form-field>
 
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Assigned User ID</mat-label>
-                    <input matInput formControlName="assignedUserId" placeholder="Enter user ID">
-                    <mat-icon matPrefix class="field-icon">person_add</mat-icon>
-                  </mat-form-field>
-                </div>
-              </div>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Factory Code</mat-label>
+            <input matInput formControlName="factoryCode" placeholder="Enter factory code">
+            <mat-icon matPrefix class="field-icon">factory</mat-icon>
+          </mat-form-field>
 
-              <!-- Pricing & Charges Section -->
-              <div class="form-section">
-                <div class="section-header">
-                  <div class="section-title-wrapper">
-                    <mat-icon class="section-icon">payments</mat-icon>
-                    <h3 class="section-title">Pricing & Charges</h3>
-                  </div>
-                  <mat-divider></mat-divider>
-                </div>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Assigned User ID</mat-label>
+            <input matInput formControlName="assignedUserId" placeholder="Enter user ID">
+            <mat-icon matPrefix class="field-icon">person_add</mat-icon>
+          </mat-form-field>
+        </div>
+      </div>
 
-                <div class="form-grid grid-4">
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Packing Charges Type</mat-label>
-                    <mat-select formControlName="packingChargesType">
-                      <mat-option value="percentage">Percentage</mat-option>
-                      <mat-option value="fixed">Fixed Amount</mat-option>
-                      <mat-option value="none">None</mat-option>
-                    </mat-select>
-                    <mat-icon matPrefix class="field-icon">inventory</mat-icon>
-                  </mat-form-field>
+      <!-- Pricing & Charges Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <div class="section-title-wrapper">
+            <mat-icon class="section-icon">payments</mat-icon>
+            <h3 class="section-title">Pricing & Charges</h3>
+          </div>
+          <mat-divider></mat-divider>
+        </div>
 
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Packing %</mat-label>
-                    <input matInput type="number" formControlName="packingChargesPercentage" placeholder="0.00">
-                    <span matSuffix>%</span>
-                  </mat-form-field>
+        <div class="form-grid grid-4">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Packing Charges Type</mat-label>
+            <mat-select formControlName="packingChargesType">
+              <mat-option value="percentage">Percentage</mat-option>
+              <mat-option value="fixed">Fixed Amount</mat-option>
+              <mat-option value="none">None</mat-option>
+            </mat-select>
+            <mat-icon matPrefix class="field-icon">inventory</mat-icon>
+          </mat-form-field>
 
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Packing Amount</mat-label>
-                    <input matInput type="number" formControlName="packingChargesAmount" placeholder="0.00">
-                    <span matPrefix>₹</span>
-                  </mat-form-field>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Packing %</mat-label>
+            <input matInput type="number" formControlName="packingChargesPercentage" placeholder="0.00">
+            <span matSuffix>%</span>
+          </mat-form-field>
 
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>GST Percentage</mat-label>
-                    <input matInput type="number" formControlName="gstPercentage" placeholder="0.00">
-                    <span matSuffix>%</span>
-                  </mat-form-field>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Packing Amount</mat-label>
+            <input matInput type="number" formControlName="packingChargesAmount" placeholder="0.00">
+            <span matPrefix>₹</span>
+          </mat-form-field>
 
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Local Freight Type</mat-label>
-                    <mat-select formControlName="localFreightType">
-                      <mat-option value="included">Included</mat-option>
-                      <mat-option value="extra">Extra</mat-option>
-                      <mat-option value="fob">FOB</mat-option>
-                    </mat-select>
-                    <mat-icon matPrefix class="field-icon">local_shipping</mat-icon>
-                  </mat-form-field>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>GST Percentage</mat-label>
+            <input matInput type="number" formControlName="gstPercentage" placeholder="0.00">
+            <span matSuffix>%</span>
+          </mat-form-field>
 
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Local Freight Charges</mat-label>
-                    <input matInput type="number" formControlName="localFreightCharges" placeholder="0.00">
-                    <span matPrefix>₹</span>
-                  </mat-form-field>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Local Freight Type</mat-label>
+            <mat-select formControlName="localFreightType">
+              <mat-option value="included">Included</mat-option>
+              <mat-option value="extra">Extra</mat-option>
+              <mat-option value="fob">FOB</mat-option>
+            </mat-select>
+            <mat-icon matPrefix class="field-icon">local_shipping</mat-icon>
+          </mat-form-field>
 
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Freight Amount</mat-label>
-                    <input matInput type="number" formControlName="freightAmount" placeholder="0.00">
-                    <span matPrefix>₹</span>
-                  </mat-form-field>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Local Freight Charges</mat-label>
+            <input matInput type="number" formControlName="localFreightCharges" placeholder="0.00">
+            <span matPrefix>₹</span>
+          </mat-form-field>
 
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Development Charges</mat-label>
-                    <input matInput type="number" formControlName="developmentCharges" placeholder="0.00">
-                    <span matPrefix>₹</span>
-                  </mat-form-field>
-                </div>
-              </div>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Freight Amount</mat-label>
+            <input matInput type="number" formControlName="freightAmount" placeholder="0.00">
+            <span matPrefix>₹</span>
+          </mat-form-field>
 
-              <!-- Terms & Conditions Section -->
-              <div class="form-section">
-                <div class="section-header">
-                  <div class="section-title-wrapper">
-                    <mat-icon class="section-icon">article</mat-icon>
-                    <h3 class="section-title">Terms & Conditions</h3>
-                  </div>
-                  <mat-divider></mat-divider>
-                </div>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Development Charges</mat-label>
+            <input matInput type="number" formControlName="developmentCharges" placeholder="0.00">
+            <span matPrefix>₹</span>
+          </mat-form-field>
+        </div>
+      </div>
 
-                <div class="form-grid grid-2">
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Price Basis</mat-label>
-                    <textarea matInput formControlName="priceBasisJson" rows="3" placeholder="Enter price basis details"></textarea>
-                  </mat-form-field>
+      <!-- Terms & Conditions Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <div class="section-title-wrapper">
+            <mat-icon class="section-icon">article</mat-icon>
+            <h3 class="section-title">Terms & Conditions</h3>
+          </div>
+          <mat-divider></mat-divider>
+        </div>
 
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Payment Terms</mat-label>
-                    <textarea matInput formControlName="paymentTermsJson" rows="3" placeholder="Enter payment terms"></textarea>
-                  </mat-form-field>
+        <div class="form-grid grid-2">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Price Basis</mat-label>
+            <textarea matInput formControlName="priceBasisJson" rows="3"
+              placeholder="Enter price basis details"></textarea>
+          </mat-form-field>
 
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Delivery Period (Days)</mat-label>
-                    <input matInput formControlName="deliveryPeriod" placeholder="Enter delivery period">
-                    <mat-icon matPrefix class="field-icon">schedule</mat-icon>
-                  </mat-form-field>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Payment Terms</mat-label>
+            <textarea matInput formControlName="paymentTermsJson" rows="3" placeholder="Enter payment terms"></textarea>
+          </mat-form-field>
 
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Delivery Period Details</mat-label>
-                    <textarea matInput formControlName="deliveryPeriodJson" rows="3" placeholder="Additional delivery details"></textarea>
-                  </mat-form-field>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Delivery Period (Days)</mat-label>
+            <input matInput formControlName="deliveryPeriod" placeholder="Enter delivery period">
+            <mat-icon matPrefix class="field-icon">schedule</mat-icon>
+          </mat-form-field>
 
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Warranty</mat-label>
-                    <input matInput formControlName="warranty" placeholder="Enter warranty details">
-                    <mat-icon matPrefix class="field-icon">verified_user</mat-icon>
-                  </mat-form-field>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Delivery Period Details</mat-label>
+            <textarea matInput formControlName="deliveryPeriodJson" rows="3"
+              placeholder="Additional delivery details"></textarea>
+          </mat-form-field>
 
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>LD Clause</mat-label>
-                    <input matInput formControlName="ldClause" placeholder="Liquidated damages clause">
-                    <mat-icon matPrefix class="field-icon">gavel</mat-icon>
-                  </mat-form-field>
-                </div>
-              </div>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Warranty</mat-label>
+            <input matInput formControlName="warranty" placeholder="Enter warranty details">
+            <mat-icon matPrefix class="field-icon">verified_user</mat-icon>
+          </mat-form-field>
 
-              <!-- Technical & Compliance Section -->
-              <div class="form-section">
-                <div class="section-header">
-                  <div class="section-title-wrapper">
-                    <mat-icon class="section-icon">engineering</mat-icon>
-                    <h3 class="section-title">Technical & Compliance</h3>
-                  </div>
-                  <mat-divider></mat-divider>
-                </div>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>LD Clause</mat-label>
+            <input matInput formControlName="ldClause" placeholder="Liquidated damages clause">
+            <mat-icon matPrefix class="field-icon">gavel</mat-icon>
+          </mat-form-field>
+        </div>
+      </div>
 
-                <div class="form-grid grid-3">
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Make Certificate (MOC)</mat-label>
-                    <input matInput formControlName="makeCertificateMoc" placeholder="Material of construction">
-                    <mat-icon matPrefix class="field-icon">certificate</mat-icon>
-                  </mat-form-field>
+      <!-- Technical & Compliance Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <div class="section-title-wrapper">
+            <mat-icon class="section-icon">engineering</mat-icon>
+            <h3 class="section-title">Technical & Compliance</h3>
+          </div>
+          <mat-divider></mat-divider>
+        </div>
 
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Technical Suitability</mat-label>
-                    <mat-select formControlName="technicalSuitability">
-                      <mat-option value="suitable">Suitable</mat-option>
-                      <mat-option value="partially_suitable">Partially Suitable</mat-option>
-                      <mat-option value="not_suitable">Not Suitable</mat-option>
-                      <mat-option value="pending_review">Pending Review</mat-option>
-                    </mat-select>
-                    <mat-icon matPrefix class="field-icon">check_circle</mat-icon>
-                  </mat-form-field>
+        <div class="form-grid grid-3">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Make Certificate (MOC)</mat-label>
+            <input matInput formControlName="makeCertificateMoc" placeholder="Material of construction">
+            <mat-icon matPrefix class="field-icon">certificate</mat-icon>
+          </mat-form-field>
 
-                  <mat-form-field appearance="outline" class="form-field">
-                    <mat-label>Comparison Status</mat-label>
-                    <mat-select formControlName="comparisonStatus">
-                      <mat-option value="not_compared">Not Compared</mat-option>
-                      <mat-option value="in_progress">In Progress</mat-option>
-                      <mat-option value="completed">Completed</mat-option>
-                    </mat-select>
-                    <mat-icon matPrefix class="field-icon">compare</mat-icon>
-                  </mat-form-field>
-                </div>
-              </div>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Technical Suitability</mat-label>
+            <mat-select formControlName="technicalSuitability">
+              <mat-option value="suitable">Suitable</mat-option>
+              <mat-option value="partially_suitable">Partially Suitable</mat-option>
+              <mat-option value="not_suitable">Not Suitable</mat-option>
+              <mat-option value="pending_review">Pending Review</mat-option>
+            </mat-select>
+            <mat-icon matPrefix class="field-icon">check_circle</mat-icon>
+          </mat-form-field>
 
-              <!-- Version & Settings Section -->
-              <div class="form-section">
-                <div class="section-header">
-                  <div class="section-title-wrapper">
-                    <mat-icon class="section-icon">settings</mat-icon>
-                    <h3 class="section-title">Version & Settings</h3>
-                  </div>
-                  <mat-divider></mat-divider>
-                </div>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Comparison Status</mat-label>
+            <mat-select formControlName="comparisonStatus">
+              <mat-option value="not_compared">Not Compared</mat-option>
+              <mat-option value="in_progress">In Progress</mat-option>
+              <mat-option value="completed">Completed</mat-option>
+            </mat-select>
+            <mat-icon matPrefix class="field-icon">compare</mat-icon>
+          </mat-form-field>
+        </div>
+      </div>
 
-                <div class="form-grid grid-4">
-                  @if (isEdit) {
-                    <mat-form-field appearance="outline" class="form-field">
-                      <mat-label>ID</mat-label>
-                      <input matInput formControlName="id" readonly>
-                      <mat-icon matPrefix class="field-icon">fingerprint</mat-icon>
-                    </mat-form-field>
-                  }
+      <!-- Version & Settings Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <div class="section-title-wrapper">
+            <mat-icon class="section-icon">settings</mat-icon>
+            <h3 class="section-title">Version & Settings</h3>
+          </div>
+          <mat-divider></mat-divider>
+        </div>
 
-                  <div class="checkbox-field">
-                    <mat-checkbox formControlName="isLatestVersion" class="custom-checkbox">
-                      Latest Version
-                    </mat-checkbox>
-                  </div>
+        <div class="form-grid grid-4">
+          @if (isEdit) {
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>ID</mat-label>
+            <input matInput formControlName="id" readonly>
+            <mat-icon matPrefix class="field-icon">fingerprint</mat-icon>
+          </mat-form-field>
+          }
 
-                  <div class="checkbox-field">
-                    <mat-checkbox formControlName="isNegotiationAllowed" class="custom-checkbox">
-                      Negotiation Allowed
-                    </mat-checkbox>
-                  </div>
-                </div>
-              </div>
+          <div class="checkbox-field">
+            <mat-checkbox formControlName="isLatestVersion" class="custom-checkbox">
+              Latest Version
+            </mat-checkbox>
+          </div>
 
-              <!-- Form Actions -->
-              <div class="form-actions">
-                <button mat-stroked-button type="button" (click)="form.reset()" class="btn-secondary">
-                  <mat-icon>clear</mat-icon>
-                  Clear Form
-                </button>
-                <button mat-raised-button color="primary" type="submit" class="btn-primary">
-                  <mat-icon>@if (isEdit) { update } @else { save }</mat-icon>
-                  @if (isEdit) {
-                    Update Bid
-                  } @else {
-                    Save Bid
-                  }
-                </button>
-              </div>
-            </form>
-          </mat-card-content>
-        </mat-card>
+          <div class="checkbox-field">
+            <mat-checkbox formControlName="isNegotiationAllowed" class="custom-checkbox">
+              Negotiation Allowed
+            </mat-checkbox>
+          </div>
+        </div>
+      </div>
 
-    
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button mat-stroked-button type="button" (click)="form.reset()" class="btn-secondary">
+          <mat-icon>clear</mat-icon>
+          Clear Form
+        </button>
+        <button mat-raised-button color="primary" type="submit" class="btn-primary">
+          <mat-icon>@if (isEdit) { update } @else { save }</mat-icon>
+          @if (isEdit) {
+          Update Bid
+          } @else {
+          Save Bid
+          }
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
