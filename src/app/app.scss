@@ -1,0 +1,383 @@
+@use '@angular/material' as mat;
+
+// ===========================
+// VARIABLES & THEME
+// ===========================
+
+$primary-color: #1976d2;
+$primary-dark: #1565c0;
+$primary-light: #42a5f5;
+$accent-color: #2196f3;
+$warn-color: #f44336;
+$success-color: #4caf50;
+
+$white: #ffffff;
+$background: #f5f7fa;
+$card-background: #ffffff;
+$border-color: #e0e4e8;
+$text-primary: #1a1a1a;
+$text-secondary: #6b7280;
+$text-muted: #9ca3af;
+
+$sidebar-width: 260px;
+$header-height: 64px;
+$border-radius: 8px;
+$border-radius-lg: 12px;
+$spacing-unit: 8px;
+
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+$shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+// ===========================
+// MIXINS
+// ===========================
+
+@mixin transition-smooth {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// ===========================
+// GLOBAL LAYOUT
+// ===========================
+
+.dashboard-wrapper {
+  width: 100%;
+  height: 100vh;
+  background: $background;
+  overflow: hidden;
+}
+
+.sidenav-container {
+  width: 100%;
+  height: 100%;
+  background: $background;
+}
+
+// ===========================
+// SIDENAV
+// ===========================
+
+.dashboard-sidenav {
+  display: flex;
+  flex-direction: column;
+  width: $sidebar-width;
+  background: #ffffff;
+  border-right: 1px solid $border-color;
+  box-shadow: $shadow-sm;
+  padding: 0;
+  @include transition-smooth;
+
+  // hide scrollbar but still scrollable
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &.collapsed {
+    width: 97px;
+    border-radius:0;
+
+    
+    .side-top {
+      justify-content: center;
+      border-radius: 0 !important;  // ← blue bar also square
+    }
+
+    .side-top-right,
+    .nav-item span,
+    .submenu-list,
+    .nav-expansion .mat-expansion-panel-header span {
+      display: none;
+    }
+    .sidenav-footer {
+  display: none !important;
+}
+  }
+}
+
+// scroll area
+.nav-list {
+  flex: 1;
+  padding: $spacing-unit * 2 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+// FOOTER – always bottom
+.sidenav-footer {
+  margin-top: auto;
+  padding: $spacing-unit * 2;
+  border-top: 1px solid $border-color;
+  background: #ffffff;
+
+  .user-profile {
+    display: flex;
+    align-items: center;
+    gap: $spacing-unit * 2;
+
+    mat-icon {
+      font-size: 36px;
+      width: 36px;
+      height: 36px;
+      color: $text-secondary;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+
+      .user-name {
+        font-weight: 600;
+        font-size: 14px;
+        color: $text-primary;
+      }
+
+      .user-role {
+        font-size: 12px;
+        color: $text-muted;
+      }
+    }
+  }
+}
+
+// ===========================
+// TOP BLUE BRAND BAR
+// ===========================
+
+.side-top {
+  height: 72px;
+  background: linear-gradient(135deg, $primary-color, $primary-dark);
+  display: flex;
+  align-items: center;
+  padding: 0 $spacing-unit * 2;
+  border-radius: 0 0 16px 16px;
+  box-shadow: $shadow-md;
+  gap: $spacing-unit * 2;
+  @include transition-smooth;
+
+  &.centered {
+    justify-content: center;
+  }
+}
+
+.side-logo-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: $white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  mat-icon {
+    font-size: 22px;
+    color: $primary-color;
+  }
+}
+
+.side-top-right {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+
+  .side-app-name {
+    color: $white;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+  }
+}
+
+// floating toggle button
+.collapse-toggle {
+  position: absolute;
+  top: 80px;
+  right: -14px;
+  z-index: 10;
+  background: #ffffff;
+  border-radius: 999px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  width: 40px;
+  height: 20px;
+  min-width: 28px;
+  padding: 0;
+
+  mat-icon {
+    font-size: 18px;
+  }
+}
+
+// ===========================
+// MENU ITEMS
+// ===========================
+
+mat-list-item {
+  border-radius: 999px;
+  margin: 4px 8px;
+  height: 45px;
+  padding-inline: 8px;
+
+  &:hover {
+    background: rgba($primary-color, 0.07);
+  }
+
+  &.active {
+    background: rgba($primary-color, 0.12);
+
+    mat-icon {
+      color: $primary-color;
+    }
+  }
+
+  mat-icon {
+    color: $text-secondary;
+  }
+
+  span {
+    font-size: 14px;
+    font-weight: 500;
+    color: $text-secondary;
+  }
+}
+
+// Expansion panels for groups
+.nav-expansion {
+  box-shadow: none !important;
+  background: transparent !important;
+  margin: 4px 8px;
+
+  .mat-expansion-panel-header {
+    padding: 0 12px !important;
+    border-radius: 999px;
+
+    mat-icon {
+      margin-right: 12px;
+      color: $text-secondary;
+    }
+
+    span {
+      font-size: 14px;
+      color: $text-secondary;
+    }
+
+    &:hover {
+      background: rgba($primary-color, 0.06);
+    }
+  }
+
+  .mat-expansion-panel-content {
+    padding: 0 !important;
+  }
+}
+
+// submenus (only when expanded)
+.submenu-list {
+  padding-left: 16px;
+  padding-bottom: 8px;
+
+  .submenu-item {
+    margin: 2px 4px;
+    border-radius: $border-radius;
+    padding-left: 12px;
+    min-height: 32px;
+    cursor: pointer;
+    @include transition-smooth;
+
+    span {
+      font-size: 13px;
+      color: $text-secondary;
+    }
+
+    &:hover {
+      background: rgba($primary-color, 0.04);
+    }
+
+    &.active span {
+      color: $primary-color;
+      font-weight: 600;
+    }
+  }
+}
+
+// ===========================
+// TOP APP BAR + CONTENT
+// ===========================
+
+.top-header {
+  height: $header-height;
+  background: $white;
+  border-bottom: 1px solid $border-color;
+  box-shadow: $shadow-sm;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 $spacing-unit * 3;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: $spacing-unit * 2;
+
+    .menu-button {
+      color: $text-secondary;
+    }
+
+    .page-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: $spacing-unit;
+      color: $text-secondary;
+      font-size: 14px;
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: $spacing-unit;
+
+    .header-icon-btn {
+      color: $text-secondary;
+      @include transition-smooth;
+
+      &:hover {
+        color: $primary-color;
+        background: rgba($primary-color, 0.04);
+      }
+    }
+  }
+}
+
+.dashboard-content {
+  background: $background;
+  overflow-y: auto;
+}
+
+.content-wrapper {
+  padding: $spacing-unit * 3;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+
+mat-icon {
+  font-family: 'Material Symbols Rounded' !important;
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+}

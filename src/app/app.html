@@ -1,0 +1,182 @@
+<!-- MASTER LAYOUT (app.component.html) -->
+<div class="dashboard-wrapper">
+  <mat-sidenav-container class="sidenav-container">
+
+    <!-- SIDEBAR -->
+    <mat-sidenav
+      mode="side"
+      class="dashboard-sidenav"
+      [class.collapsed]="collapsed()"
+      [opened]="true"
+      (mouseenter)="collapsed.set(false)"
+      (mouseleave)="collapsed.set(true)"
+    >
+
+      <!-- TOP BLUE BRAND BAR -->
+      <div class="side-top" [class.centered]="collapsed()">
+        <div class="side-logo-circle">
+          <mat-icon>tab</mat-icon>
+        </div>
+
+        <div class="side-top-right">
+          <span class="side-app-name">VendorBid</span>
+        </div>
+      </div>
+
+      <!-- FLOATING TOGGLE BUTTON -->
+      <button
+        class="collapse-toggle"
+        mat-icon-button
+        (click)="toggle()"
+        matTooltip="Collapse / Expand"
+      >
+        <mat-icon>{{ collapsed() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+      </button>
+
+      <!-- MAIN NAV (scrollable area) -->
+      <mat-nav-list class="nav-list">
+
+        <!-- Dashboard -->
+        <div routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <mat-list-item class="nav-item" routerLink="/dashboard">
+            <mat-icon matListItemIcon>home</mat-icon>
+            <span matListItemTitle>Dashboard</span>
+          </mat-list-item>
+        </div>
+
+        <!-- RFQ Bid -->
+        <!-- <mat-list-item class="nav-item" routerLink="/BidHeader" routerLinkActive="active">
+          <mat-icon matListItemIcon>assignment</mat-icon>
+          <span matListItemTitle>RFQ Bid</span>
+        </mat-list-item> -->
+
+        <!-- MASTER (EXPANDABLE GROUP) -->
+        <mat-expansion-panel
+          class="nav-expansion"
+          [expanded]="!collapsed()"
+        >
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>person</mat-icon>
+              <span>Master</span>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <mat-nav-list class="submenu-list" *ngIf="!collapsed()">
+            <mat-list-item class="submenu-item" routerLink="/BidHeader" routerLinkActive="active">
+              <span>Vendor</span>
+            </mat-list-item>
+
+            <mat-list-item class="submenu-item" routerLink="/BidVirsion" routerLinkActive="active">
+              <span>Vendor Bank Account</span>
+            </mat-list-item>
+
+            <mat-list-item class="submenu-item">
+              <span>Payment Terms</span>
+            </mat-list-item>
+
+            <mat-list-item class="submenu-item">
+              <span>Order Address</span>
+            </mat-list-item>
+
+            <mat-list-item class="submenu-item">
+              <span>Item</span>
+            </mat-list-item>
+
+            <mat-list-item class="submenu-item">
+              <span>Item Category</span>
+            </mat-list-item>
+
+            <mat-list-item class="submenu-item">
+              <span>Country</span>
+            </mat-list-item>
+
+            <mat-list-item class="submenu-item">
+              <span>State</span>
+            </mat-list-item>
+
+            <mat-list-item class="submenu-item">
+              <span>Postcode</span>
+            </mat-list-item>
+          </mat-nav-list>
+        </mat-expansion-panel>
+
+        <!-- ACCESS CONTROL (EXPANDABLE GROUP) -->
+        <mat-expansion-panel
+          class="nav-expansion"
+          [expanded]="!collapsed()"
+        >
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>settings</mat-icon>
+              <span>Access Control</span>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <mat-nav-list class="submenu-list" *ngIf="!collapsed()">
+            <mat-list-item class="submenu-item" routerLink="/BidHeader" routerLinkActive="active">
+              <span>Settings</span>
+            </mat-list-item>
+
+            <mat-list-item class="submenu-item" routerLink="/BidVirsion" routerLinkActive="active">
+              <span>Application Config</span>
+            </mat-list-item>
+          </mat-nav-list>
+        </mat-expansion-panel>
+
+      </mat-nav-list>
+
+      <!-- FOOTER (always at bottom, only one) -->
+      <div class="sidenav-footer">
+        <mat-divider></mat-divider>
+        <div class="user-profile">
+          <mat-icon>account_circle</mat-icon>
+          <div class="user-info">
+            <span class="user-name">Admin User</span>
+            <span class="user-role">Administrator</span>
+          </div>
+        </div>
+      </div>
+
+    </mat-sidenav>
+
+    <!-- MAIN CONTENT -->
+    <mat-sidenav-content class="dashboard-content">
+
+      <!-- HEADER BAR -->
+      <mat-toolbar class="top-header">
+        <div class="header-left">
+          <button mat-icon-button class="menu-button">
+            <mat-icon>menu</mat-icon>
+          </button>
+
+          <span class="page-breadcrumb">
+            <mat-icon>home</mat-icon>
+            <span>/ Application</span>
+          </span>
+        </div>
+
+        <div class="header-right">
+          <button mat-icon-button class="header-icon-btn">
+            <mat-icon matBadge="3" matBadgeColor="warn" aria-hidden="false">notifications</mat-icon>
+          </button>
+
+          <button mat-icon-button class="header-icon-btn">
+            <mat-icon>help_outline</mat-icon>
+          </button>
+
+          <button mat-icon-button class="header-icon-btn">
+            <mat-icon>account_circle</mat-icon>
+          </button>
+        </div>
+      </mat-toolbar>
+
+      <!-- HERE PAGE CONTENT LOADS -->
+      <div class="content-wrapper">
+        <router-outlet></router-outlet>
+      </div>
+
+    </mat-sidenav-content>
+
+  </mat-sidenav-container>
+</div>
