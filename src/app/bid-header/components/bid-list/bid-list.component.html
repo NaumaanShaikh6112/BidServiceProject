@@ -1,4 +1,4 @@
-<mat-card class="table-card glass-card fade-in">
+<mat-card class="table-card glass-card fade-in" [@fadeIn]>
   <mat-card-header class="card-header">
     <div class="card-title-wrapper">
       <mat-icon class="card-icon">table_chart</mat-icon>
@@ -6,16 +6,46 @@
     </div>
 
     <div class="table-actions">
-      <button mat-raised-button color="primary" class="btn-primary" (click)="createNew()">
+      <!-- Export Menu -->
+      <button mat-icon-button [matMenuTriggerFor]="exportMenu" matTooltip="Export">
+        <mat-icon>download</mat-icon>
+      </button>
+      <mat-menu #exportMenu="matMenu">
+        <button mat-menu-item (click)="exportToCSV()">
+          <mat-icon>table_view</mat-icon>
+          <span>Export CSV</span>
+        </button>
+        <button mat-menu-item (click)="exportToExcel()">
+          <mat-icon>grid_on</mat-icon>
+          <span>Export Excel</span>
+        </button>
+        <button mat-menu-item (click)="exportToPDF()">
+          <mat-icon>picture_as_pdf</mat-icon>
+          <span>Export PDF</span>
+        </button>
+      </mat-menu>
+
+      <!-- Filter drawer toggle -->
+      <button mat-icon-button class="filter-btn" matTooltip="Advanced Filters"
+              (click)="toggleFilterPanel()">
+        <mat-icon>filter_alt</mat-icon>
+      </button>
+
+      <!-- Search -->
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search</mat-label>
+        <input matInput placeholder="Search bids..."
+               [value]="searchText"
+               (keyup)="onSearchChange($event.target.value)">
+        <mat-icon matPrefix>search</mat-icon>
+      </mat-form-field>
+
+      <!-- Create New -->
+      <button mat-raised-button color="primary" class="btn-primary"
+              (click)="createNew()" *ngIf="canCreate">
         <mat-icon>add</mat-icon>
         Create New
       </button>
-
-      <mat-form-field appearance="outline" class="search-field">
-        <mat-label>Search</mat-label>
-        <input matInput placeholder="Search bids..." (keyup)="applyFilter($event)">
-        <mat-icon matPrefix>search</mat-icon>
-      </mat-form-field>
     </div>
   </mat-card-header>
 
@@ -33,13 +63,13 @@
 
         <!-- Indent -->
         <ng-container matColumnDef="indentNo">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Indent No</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>INDENT NO</th>
           <td mat-cell *matCellDef="let row">{{ row.indentNo }}</td>
         </ng-container>
 
         <!-- Vendor -->
         <ng-container matColumnDef="vendorName">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Vendor</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>VENDOR</th>
           <td mat-cell *matCellDef="let row">
             <div class="vendor-cell">
               <mat-icon class="vendor-icon">business</mat-icon>
@@ -50,21 +80,25 @@
 
         <!-- Bid No -->
         <ng-container matColumnDef="bidNo">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Bid No</th>
-          <td mat-cell *matCellDef="let row"><strong>{{ row.bidNo }}</strong></td>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>BID NO</th>
+          <td mat-cell *matCellDef="let row">
+            <strong>{{ row.bidNo }}</strong>
+          </td>
         </ng-container>
 
         <!-- Date -->
         <ng-container matColumnDef="bidDate">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Bid Date</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>BID DATE</th>
           <td mat-cell *matCellDef="let row">{{ row.bidDate | date:'MMM dd, yyyy' }}</td>
         </ng-container>
 
         <!-- Status -->
         <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>STATUS</th>
           <td mat-cell *matCellDef="let row">
-            <span class="status-badge" [ngClass]="'status-' + row.status?.toLowerCase()">
+            <span class="status-badge"
+                  [ngClass]="'status-' + row.status?.toLowerCase()"
+                  (click)="openStatusTimeline(row)">
               {{ row.status }}
             </span>
           </td>
@@ -72,34 +106,171 @@
 
         <!-- Version -->
         <ng-container matColumnDef="version">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Version</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>VERSION</th>
           <td mat-cell *matCellDef="let row">
-            <span class="version-badge">v{{ row.version }}</span>
+            <!-- Simple dropdown demo, you can replace with real versions -->
+            <button mat-stroked-button class="version-chip" [matMenuTriggerFor]="versionMenu">
+              v{{ row.version || 1 }}
+              <mat-icon>expand_more</mat-icon>
+            </button>
           </td>
         </ng-container>
 
+        <mat-menu #versionMenu="matMenu">
+          <button mat-menu-item>
+            <span>v1 (Current)</span>
+          </button>
+          <button mat-menu-item disabled>
+            <span>v0 (History)</span>
+          </button>
+        </mat-menu>
+
         <!-- Actions -->
         <ng-container matColumnDef="action">
-          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <th mat-header-cell *matHeaderCellDef>ACTIONS</th>
           <td mat-cell *matCellDef="let row">
             <div class="action-buttons">
-              <button mat-icon-button color="primary" (click)="edit(row)" matTooltip="Edit" class="action-btn-icon">
+              <button mat-icon-button color="primary" class="action-btn-icon"
+                      (click)="edit(row)" matTooltip="Edit" *ngIf="canEdit">
                 <mat-icon>edit</mat-icon>
               </button>
 
-              <button mat-icon-button color="warn" (click)="delete(row.id)" matTooltip="Delete"
-                class="action-btn-icon">
+              <button mat-icon-button color="warn" class="action-btn-icon"
+                      (click)="delete(row.id)" matTooltip="Delete" *ngIf="canDelete">
                 <mat-icon>delete</mat-icon>
               </button>
             </div>
           </td>
         </ng-container>
 
+        <!-- HEADER + ROW -->
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></tr>
+        <tr mat-row
+            *matRowDef="let row; columns: displayedColumns;"
+            class="table-row"
+            [class.row-expanded]="expandedRow === row"
+            (click)="onRowClick(row)">
+        </tr>
       </table>
 
-      <mat-paginator [pageSizeOptions]="[5, 10, 20, 50]" showFirstLastButtons></mat-paginator>
+      <mat-paginator [pageSizeOptions]="[5, 10, 20, 50]"
+                     showFirstLastButtons>
+      </mat-paginator>
     </div>
+
+    <!-- Detail Card (Row Expansion) -->
+    <div class="detail-card-wrapper" *ngIf="expandedRow" [@detailExpand]="expandedRow ? 'expanded' : 'collapsed'">
+      <div class="detail-card">
+        <div class="detail-header">
+          <div class="left">
+            <h3>{{ expandedRow.bidNo }} – {{ expandedRow.vendorName }}</h3>
+            <p>Indent: {{ expandedRow.indentNo }} • Bid Date: {{ expandedRow.bidDate | date:'MMM dd, yyyy' }}</p>
+          </div>
+          <div class="right">
+            <span class="status-badge" [ngClass]="'status-' + expandedRow.status?.toLowerCase()">
+              {{ expandedRow.status }}
+            </span>
+          </div>
+        </div>
+
+        <div class="detail-grid">
+          <div class="detail-item">
+            <label>Vendor ID</label>
+            <span>{{ expandedRow.vendorId }}</span>
+          </div>
+          <div class="detail-item">
+            <label>Contact Person</label>
+            <span>{{ expandedRow.contactPerson }}</span>
+          </div>
+          <div class="detail-item">
+            <label>Mobile</label>
+            <span>{{ expandedRow.mobileNo }}</span>
+          </div>
+          <div class="detail-item">
+            <label>Factory Code</label>
+            <span>{{ expandedRow.factoryCode }}</span>
+          </div>
+          <div class="detail-item">
+            <label>Assigned User</label>
+            <span>{{ expandedRow.assignedUserId }}</span>
+          </div>
+          <div class="detail-item">
+            <label>Version</label>
+            <span>v{{ expandedRow.version }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="dataSource.data.length === 0">
+      <mat-icon>inbox</mat-icon>
+      <h3>No Bid Headers Found</h3>
+      <p>Click "Create New" to add your first record.</p>
+      <button mat-raised-button color="primary" (click)="createNew()" *ngIf="canCreate">
+        <mat-icon>add</mat-icon>
+        Create New
+      </button>
+    </div>
+
+    <!-- FILTER PANEL (SLIDE RIGHT) -->
+    <div class="filter-panel" [class.open]="isFilterPanelOpen">
+      <div class="filter-header">
+        <h3>Advanced Filters</h3>
+        <button mat-icon-button (click)="toggleFilterPanel()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="filter-body">
+        <mat-form-field appearance="outline">
+          <mat-label>Status</mat-label>
+          <mat-select [value]="statusFilter" (selectionChange)="onStatusChange($event.value)">
+            <mat-option [value]="null">All</mat-option>
+            <mat-option value="draft">Draft</mat-option>
+            <mat-option value="submitted">Submitted</mat-option>
+            <mat-option value="under_review">Under Review</mat-option>
+            <mat-option value="approved">Approved</mat-option>
+            <mat-option value="rejected">Rejected</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Vendor</mat-label>
+          <input matInput [value]="vendorFilter" (keyup)="onVendorChange($event.target.value)">
+        </mat-form-field>
+
+        <div class="date-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Bid Date From</mat-label>
+            <input matInput [matDatepicker]="fromPicker" [value]="dateFrom" (dateChange)="onDateFromChange($event.value)">
+            <mat-datepicker-toggle matIconSuffix [for]="fromPicker"></mat-datepicker-toggle>
+            <mat-datepicker #fromPicker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Bid Date To</mat-label>
+            <input matInput [matDatepicker]="toPicker" [value]="dateTo" (dateChange)="onDateToChange($event.value)">
+            <mat-datepicker-toggle matIconSuffix [for]="toPicker"></mat-datepicker-toggle>
+            <mat-datepicker #toPicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="filter-footer">
+        <button mat-stroked-button (click)="resetFilters()">
+          Clear Filters
+        </button>
+        <button mat-raised-button color="primary" (click)="toggleFilterPanel()">
+          Apply
+        </button>
+      </div>
+    </div>
+
   </mat-card-content>
 </mat-card>
+
+<!-- Floating FAB for Create New -->
+<button mat-fab color="primary" class="fab-create" (click)="createNew()" *ngIf="canCreate">
+  <mat-icon>add</mat-icon>
+</button>
