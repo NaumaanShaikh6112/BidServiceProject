@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { BidHeaderService } from '../../services/bid-header.service';
+import { BidVersionService } from './bid-version.service';
 
-describe('BidHeaderService', () => {
-  let service: BidHeaderService;
+describe('BidVirsionService', () => {
+  let service: BidVersionService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(BidHeaderService);
+    service = TestBed.inject(BidVersionService);
   });
 
   it('should be created', () => {
