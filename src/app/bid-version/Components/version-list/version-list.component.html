@@ -52,12 +52,6 @@
 
       <table mat-table [dataSource]="dataSource" matSort class="modern-table">
 
-          <!-- Indent -->
-        <ng-container matColumnDef="indentNo">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Indent No</th>
-          <td mat-cell *matCellDef="let row">{{ row.id }}</td>
-        </ng-container>
-
         <!-- Indent -->
         <ng-container matColumnDef="indentNo">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Indent No</th>
