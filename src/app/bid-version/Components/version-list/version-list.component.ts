@@ -5,10 +5,9 @@ import { Router, RouterModule } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { forkJoin } from 'rxjs';
 
 import { MATERIAL } from '../../../shared/material';
-
-// 🔥 GLOBAL HELPERS
 import {
   tableAnimations,
   createGlobalFilterPredicate,
@@ -18,6 +17,7 @@ import {
 } from '../../../shared/components';
 
 import { BidVersionService } from '../../services/bid-version.service';
+import { BidHeaderService } from '../../../bid-header/services/bid-header.service';
 
 @Component({
   selector: 'app-version-list',
@@ -30,7 +30,6 @@ import { BidVersionService } from '../../services/bid-version.service';
 export class VersionListComponent implements OnInit {
 
   displayedColumns: string[] = [
-    'id',
     'indentNo',
     'vendorName',
     'bidNo',
@@ -47,6 +46,7 @@ export class VersionListComponent implements OnInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   private service = inject(BidVersionService);
+  private headerService = inject(BidHeaderService);
   private router = inject(Router);
 
   ngOnInit(): void {
@@ -58,54 +58,55 @@ export class VersionListComponent implements OnInit {
   }
 
   loadData() {
-    this.service.getAll().subscribe({
-      next: (res: any) => {
-        const list = res?.data ?? res ?? [];
-        this.dataSource.data = list;
+    forkJoin({
+      versions: this.service.getAll(),
+      headers: this.headerService.getAll()
+    }).subscribe(({ versions, headers }) => {
 
-        if (this.paginator) this.dataSource.paginator = this.paginator;
-        if (this.sort) this.dataSource.sort = this.sort;
-      }
+      // fast lookup map
+      const headerMap = new Map<any, any>(headers.map((h: any) => [h.id, h]));
+
+      const merged = versions.map((v: any) => {
+        const h: any = headerMap.get(v.bidHeaderId);
+
+        return {
+          ...v,
+          indentNo: h?.indentNo ?? '',
+          vendorName: h?.vendorName ?? '',
+          bidNo: h?.bidNo ?? ''
+        };
+      });
+
+      this.dataSource.data = merged;
+
+      if (this.paginator) this.dataSource.paginator = this.paginator;
+      if (this.sort) this.dataSource.sort = this.sort;
     });
   }
 
-  // 🔍 SEARCH
   onSearchChange(text: string) {
     this.searchText = text.toLowerCase().trim();
     this.dataSource.filter = JSON.stringify({ search: this.searchText });
   }
 
-  // ➕ CREATE
   createNew() {
     this.router.navigate(['/bid-version/new']);
   }
 
-  // ✏️ EDIT
   edit(row: any) {
     this.router.navigate(['/bid-version/edit', row.id]);
   }
 
-  // 🗑 DELETE
   delete(id: string) {
     if (!confirm('Delete this version?')) return;
-
     this.service.delete(id).subscribe(() => this.loadData());
   }
 
-  // 📤 EXPORTS
   get currentTableData() {
     return this.dataSource.filteredData ?? this.dataSource.data ?? [];
   }
 
-  exportToCSV() {
-    exportCSV(this.currentTableData);
-  }
-
-  exportToExcel() {
-    exportExcel(this.currentTableData);
-  }
-
-  exportToPDF() {
-    exportPDF(this.currentTableData, undefined, 'Bid Version List');
-  }
+  exportToCSV() { exportCSV(this.currentTableData); }
+  exportToExcel() { exportExcel(this.currentTableData); }
+  exportToPDF() { exportPDF(this.currentTableData, undefined, 'Bid Version List'); }
 }

@@ -1,42 +1,146 @@
-<mat-card class="p-4">
-  <h2>{{ isEdit ? "Edit Version" : "Create Version" }}</h2>
+<mat-card class="form-card glass-card">
+  <mat-card-header class="card-header">
+    <div class="card-title-wrapper">
+      <mat-icon class="card-icon">description</mat-icon>
 
-  <form [formGroup]="form" class="form">
-
-    <mat-form-field appearance="outline">
-      <mat-label>Bid Header ID</mat-label>
-      <input matInput formControlName="bidHeaderId">
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Version</mat-label>
-      <input matInput formControlName="version" type="number">
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Offered Price</mat-label>
-      <input matInput formControlName="offeredPrice" type="number">
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Negotiated Price</mat-label>
-      <input matInput formControlName="negotiatedPrice" type="number">
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>GST %</mat-label>
-      <input matInput formControlName="gstPercentage" type="number">
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Discount %</mat-label>
-      <input matInput formControlName="discountPercentage" type="number">
-    </mat-form-field>
-
-    <div class="btn-row">
-      <button mat-flat-button color="primary" (click)="save()">Save</button>
-      <button mat-button color="warn" (click)="goBack()">Cancel</button>
+      <mat-card-title class="card-title">
+        {{ isEdit ? 'Edit Bid Header' : 'New Bid Header' }}
+      </mat-card-title>
     </div>
 
-  </form>
+    <button mat-stroked-button color="primary" class="go-list-btn" (click)="goToList()">
+      <mat-icon>arrow_back</mat-icon>
+      Back to List
+    </button>
+  </mat-card-header>
+
+  <mat-card-content class="card-content">
+    <form [formGroup]="form" (ngSubmit)="save()">
+
+      <!-- LOOP SECTIONS -->
+      <div *ngFor="let section of formSections" class="form-section">
+
+        <!-- SECTION HEADER -->
+        <div class="section-header">
+          <div class="section-title-wrapper">
+            <mat-icon class="section-icon">{{ section.icon }}</mat-icon>
+            <h3 class="section-title">{{ section.title }}</h3>
+          </div>
+          <mat-divider></mat-divider>
+        </div>
+
+        <!-- GRID (cols from config) -->
+        <div class="form-grid" [ngClass]="'grid-' + section.cols">
+
+          <!-- LOOP FIELDS -->
+          <ng-container *ngFor="let field of section.fields">
+
+            <!-- TEXT / NUMBER -->
+            <mat-form-field
+              *ngIf="field.type === 'text' || field.type === 'number'"
+              appearance="outline"
+              class="form-field">
+
+              <mat-label>{{ field.label }}</mat-label>
+
+              <input
+                matInput
+                [type]="field.type"
+                [formControlName]="field.key"
+                [placeholder]="field.placeholder || ''">
+
+              <mat-icon matPrefix class="field-icon" *ngIf="field.icon">
+                {{ field.icon }}
+              </mat-icon>
+
+              <mat-error *ngIf="form.get(field.key)?.invalid && form.get(field.key)?.touched">
+                {{ field.label }} is required.
+              </mat-error>
+            </mat-form-field>
+
+            <!-- DATE -->
+            <mat-form-field
+              *ngIf="field.type === 'date'"
+              appearance="outline"
+              class="form-field">
+
+              <mat-label>{{ field.label }}</mat-label>
+
+              <input
+                matInput
+                [matDatepicker]="dp"
+                [formControlName]="field.key">
+
+              <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
+              <mat-datepicker #dp></mat-datepicker>
+
+              <mat-error *ngIf="form.get(field.key)?.errors?.['futureDate']">
+                {{ field.label }} cannot be in the future.
+              </mat-error>
+
+              <mat-error *ngIf="form.get(field.key)?.errors?.['required']">
+                {{ field.label }} is required.
+              </mat-error>
+            </mat-form-field>
+
+            <!-- TEXTAREA -->
+            <mat-form-field
+              *ngIf="field.type === 'textarea'"
+              appearance="outline"
+              class="form-field">
+
+              <mat-label>{{ field.label }}</mat-label>
+              <textarea
+                matInput
+                rows="3"
+                [formControlName]="field.key"></textarea>
+            </mat-form-field>
+
+            <!-- SELECT -->
+            <mat-form-field
+              *ngIf="field.type === 'select'"
+              appearance="outline"
+              class="form-field">
+
+              <mat-label>{{ field.label }}</mat-label>
+
+              <mat-select [formControlName]="field.key">
+                <mat-option *ngFor="let opt of field.options" [value]="opt.value">
+                  {{ opt.label }}
+                </mat-option>
+              </mat-select>
+
+              <mat-icon matPrefix class="field-icon" *ngIf="field.icon">
+                {{ field.icon }}
+              </mat-icon>
+
+            </mat-form-field>
+
+            <!-- CHECKBOX -->
+            <div *ngIf="field.type === 'checkbox'" class="checkbox-field">
+              <mat-checkbox [formControlName]="field.key" class="custom-checkbox">
+                {{ field.label }}
+              </mat-checkbox>
+            </div>
+
+          </ng-container>
+
+        </div>
+      </div>
+
+      <!-- FORM ACTIONS -->
+      <div class="form-actions">
+        <button mat-stroked-button type="button" (click)="form.reset()" class="btn-secondary">
+          <mat-icon>clear</mat-icon>
+          Clear Form
+        </button>
+
+        <button mat-raised-button color="primary" type="submit" class="btn-primary">
+          <mat-icon>{{ isEdit ? 'update' : 'save' }}</mat-icon>
+          {{ isEdit ? 'Update Bid' : 'Save Bid' }}
+        </button>
+      </div>
+
+    </form>
+  </mat-card-content>
 </mat-card>

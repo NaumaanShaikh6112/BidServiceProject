@@ -4,13 +4,13 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 // Helpers
 import { createBidHeaderForm } from './helpers/form-factory';
-import { splitDate, normalizePayload } from './helpers/date-helpers';
+import { splitDate, normalizePayload } from '../../../shared/components/list/date-helpers';
 import {
   patchBidRecord,
   handleSuccess,
   handleDeleteSuccess,
   handleError
-} from './helpers/form-actions';
+} from '../../../shared/components/list/form-actions';
 // Helpers END
 
 // Config (Dynamic Sections)
